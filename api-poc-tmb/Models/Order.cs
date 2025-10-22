@@ -14,6 +14,6 @@
         public string Produto { get; set; }
         public float Valor { get; set; }
         public EOrderStatus Status { get; set; }
-        public DateTimeOffset Sata_criacao { get; set; }
+        public DateTimeOffset Data_criacao { get; set; }
     }
 }
