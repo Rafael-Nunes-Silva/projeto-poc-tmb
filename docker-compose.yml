@@ -4,3 +4,27 @@ services:
     build:
       context: .
       dockerfile: api-poc-tmb/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgresql-poc-tmb;Port=5432;Database=ordersdb;Username=backend-user;Password=Tw2cDZOca41W
+    depends_on:
+      - postgresql-poc-tmb
+
+  postgresql-poc-tmb:
+    image: postgres:15
+    container_name: postgresql-poc-tmb
+    environment:
+      - POSTGRES_USER=backend-user
+      - POSTGRES_PASSWORD=Tw2cDZOca41W
+      - POSTGRES_DB=ordersdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U backend-user"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
