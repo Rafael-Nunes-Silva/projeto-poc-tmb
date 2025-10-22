@@ -1,0 +1,6 @@
+services:
+  api-poc-tmb:
+    image: ${DOCKER_REGISTRY-}apipoctmb
+    build:
+      context: .
+      dockerfile: api-poc-tmb/Dockerfile
