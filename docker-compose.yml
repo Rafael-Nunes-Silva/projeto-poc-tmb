@@ -24,5 +24,11 @@ services:
       timeout: 5s
       retries: 10
 
+  worker-poc-tmb:
+    image: ${DOCKER_REGISTRY-}apipoctmb
+    build:
+      context: .
+      dockerfile: worker-orders/Dockerfile
+
 volumes:
   pgdata:
