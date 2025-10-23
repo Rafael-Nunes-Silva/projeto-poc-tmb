@@ -1,7 +1,9 @@
 using api_poc_tmb.Data;
 using api_poc_tmb.Models;
+using Azure.Messaging.ServiceBus;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace api_poc_tmb.Controllers
@@ -12,14 +14,18 @@ namespace api_poc_tmb.Controllers
     {
         private readonly ILogger<OrdersController> _logger;
         private readonly DatabaseContext _dbContext;
+        private readonly ServiceBusClient _busClient;
+        private readonly string _queueName = "orders-queue";
 
         public OrdersController(
             ILogger<OrdersController> logger,
-            DatabaseContext dbContext
+            DatabaseContext dbContext,
+            ServiceBusClient busClient
             )
         {
             _logger = logger;
             _dbContext = dbContext;
+            _busClient = busClient;
         }
 
         /// <summary>
@@ -32,19 +38,39 @@ namespace api_poc_tmb.Controllers
         {
             if (newOrder == null)
             {
-                return BadRequest("Pedido inv�lido");
+                return BadRequest("Pedido invalido");
             }
 
             newOrder.Status = EOrderStatus.Pendente;
             newOrder.Data_criacao = DateTime.UtcNow;
 
-
             _dbContext.orders.Add(newOrder);
             await _dbContext.SaveChangesAsync();
 
-            // Enviar mensagem para a fila
+            var sender = _busClient.CreateSender(_queueName);
 
-            _logger.LogInformation("Pedido {OrderId} criado.", newOrder.Id);
+            var messageBody = JsonSerializer.Serialize(new
+            {
+                OrderId = newOrder.Id,
+                Cliente = newOrder.Cliente,
+                Produto = newOrder.Produto,
+                Valor = newOrder.Valor,
+                Status = newOrder.Status.ToString(),
+                Data_criacao = newOrder.Data_criacao
+            });
+
+            var message = new ServiceBusMessage(messageBody)
+            {
+                CorrelationId = newOrder.Id.ToString(),
+                ApplicationProperties =
+                {
+                    { "EventType", "OrderCreated" }
+                }
+            };
+
+            await sender.SendMessageAsync(message);
+
+            _logger.LogInformation("Pedido {OrderId} criado e mensagem enviada à fila.", newOrder.Id);
 
             return CreatedAtAction(nameof(GetOrderById), new { id = newOrder.Id }, newOrder);
         }
@@ -56,8 +82,8 @@ namespace api_poc_tmb.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetAllOrders()
         {
-            var pedidos = await _dbContext.orders.ToListAsync();
-            return Ok(pedidos);
+            var orders = await _dbContext.orders.ToListAsync();
+            return Ok(orders);
         }
 
         /// <summary>
@@ -70,7 +96,7 @@ namespace api_poc_tmb.Controllers
         {
             var order = _dbContext.orders.FirstOrDefault(o => o.Id == id);
             if (order == null)
-                return NotFound();
+                return NotFound($"Pedido {id} não encontrado");
 
             return Ok(order);
         }

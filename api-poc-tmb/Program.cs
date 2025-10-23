@@ -1,7 +1,6 @@
 using api_poc_tmb.Data;
+using Azure.Messaging.ServiceBus;
 using Microsoft.EntityFrameworkCore;
-using System;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace api_poc_tmb
 {
@@ -12,11 +11,17 @@ namespace api_poc_tmb
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
-            builder.Services.AddControllers();
-
+            
             builder.Services.AddDbContext<DatabaseContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddSingleton<ServiceBusClient>(sp =>
+            {
+                var connString = builder.Configuration.GetSection("AzureServiceBus").GetValue<string>("ConnectionString");
+                return new ServiceBusClient(connString);
+            });
+
+            builder.Services.AddControllers();
 
             var app = builder.Build();
 
