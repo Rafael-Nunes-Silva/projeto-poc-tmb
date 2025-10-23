@@ -1,6 +1,10 @@
 using api_poc_tmb.Data;
+using api_poc_tmb.HealthChecks;
 using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace api_poc_tmb
 {
@@ -11,7 +15,7 @@ namespace api_poc_tmb
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            
+
             builder.Services.AddDbContext<DatabaseContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -21,11 +25,34 @@ namespace api_poc_tmb
                 return new ServiceBusClient(connString);
             });
 
+            var serviceBusConn = builder.Configuration.GetSection("AzureServiceBus").GetValue<string>("ConnectionString");
+            var serviceBusQueue = builder.Configuration.GetSection("AzureServiceBus").GetValue<string>("QueueName");
+
+            builder.Services.AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy("OK"), tags: new[] { "live" })
+                .AddCheck("postgres", new PostgresHealthCheck(
+                    builder.Configuration.GetConnectionString("DefaultConnection")!
+                ), tags: new[] { "ready", "db" })
+                .AddCheck("servicebus", new ServiceBusHealthCheck(
+                    new ServiceBusAdministrationClient(serviceBusConn),
+                    serviceBusQueue!
+                ), tags: new[] { "ready", "queue" });
+
             builder.Services.AddControllers();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            app.MapHealthChecks("/health/live", new HealthCheckOptions
+            {
+                Predicate = (check) => check.Tags.Contains("live"),
+                ResponseWriter = CustomHealthResponse.WriteResponse
+            });
+
+            app.MapHealthChecks("/health/ready", new HealthCheckOptions
+            {
+                Predicate = (check) => check.Tags.Contains("ready"),
+                ResponseWriter = CustomHealthResponse.WriteResponse
+            });
 
             app.UseHttpsRedirection();
 
