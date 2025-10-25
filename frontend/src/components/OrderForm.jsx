@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { NewOrder } from "../services/OrdersService";
-import { useNavigate } from 'react-router-dom';
 
 export default function OrderForm() {
-    const navigate = useNavigate();
-
     const [cliente, setCliente] = useState("");
     const [produto, setProduto] = useState("");
     const [valor, setValor] = useState("");
@@ -23,8 +20,6 @@ export default function OrderForm() {
                 produto,
                 parseFloat(valor)
             );
-
-            navigate(`/detalhes-pedido/${id}`);
         } catch (err) {
             console.error(err);
             alert("Erro ao enviar o pedido!");

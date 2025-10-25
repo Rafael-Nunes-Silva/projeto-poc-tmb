@@ -1,9 +1,18 @@
+version: '3.8'
+
 services:
   api-poc-tmb:
     image: ${DOCKER_REGISTRY-}apipoctmb
     build:
       context: .
       dockerfile: api-poc-tmb/Dockerfile
+    ports:
+      - "8000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgresql-poc-tmb;Port=5432;Username=backend-user;Password=Tw2cDZOca41W;Database=ordersdb
+      - ServiceBus__ConnectionString=Endpoint=sb://api-poc-tmb.servicebus.windows.net/;SharedAccessKeyName=send-listen-policy;SharedAccessKey=iRtzCyMB9AL0TPZxgK60Ntl5Zlppo+Bze+ASbM5dg2w=;EntityPath=orders-queue
+      - ServiceBus__QueueName=orders-queue
     depends_on:
       - postgresql-poc-tmb
     healthcheck:
@@ -11,10 +20,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    networks:
+      - api_network
+    restart: unless-stopped
 
   postgresql-poc-tmb:
     image: postgres:15
-    container_name: postgresql-poc-tmb
     environment:
       - POSTGRES_USER=backend-user
       - POSTGRES_PASSWORD=Tw2cDZOca41W
@@ -28,12 +39,49 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - api_network
+    restart: unless-stopped
 
   worker-poc-tmb:
-    image: ${DOCKER_REGISTRY-}apipoctmb
+    image: ${DOCKER_REGISTRY-}worker-poc-tmb
     build:
       context: .
       dockerfile: worker-orders/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgresql-poc-tmb;Port=5432;Username=backend-user;Password=Tw2cDZOca41W;Database=ordersdb
+      - ServiceBus__ConnectionString=Endpoint=sb://api-poc-tmb.servicebus.windows.net/;SharedAccessKeyName=send-listen-policy;SharedAccessKey=iRtzCyMB9AL0TPZxgK60Ntl5Zlppo+Bze+ASbM5dg2w=;EntityPath=orders-queue
+      - ServiceBus__QueueName=orders-queue
+    depends_on:
+      - postgresql-poc-tmb
+      - api-poc-tmb
+    networks:
+      - api_network
+    restart: unless-stopped
+
+  frontend-poc-tmb:
+    image: ${DOCKER_REGISTRY-}frontend-poc-tmb
+    build:
+      context: ../frontend
+      dockerfile: ../frontend/Dockerfile
+      args:
+        - VITE_BASE_API_URL=http://host.docker.internal:8000/
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-poc-tmb
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:80/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - api_network
+    restart: unless-stopped
 
 volumes:
   pgdata:
+
+networks:
+  api_network:
+    driver: bridge
