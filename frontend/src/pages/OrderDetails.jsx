@@ -62,9 +62,6 @@ export default function OrderDetails() {
                         </span>
                     </div>
                 </div>
-                <div className="my-2 max-w text-center">
-                    <button type="submit" className="p-2 border border-slate-200 rounded-xl bg-blue-200 cursor-pointer">Fazer pedido</button>
-                </div>
             </div>
         </div>
     );
