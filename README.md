@@ -2,6 +2,30 @@
 
 Projeto completo desafio POC TMB
 
+# Arquitetura
+```mermaid
+architecture-beta
+    group backend(cloud)[Backend]
+    group frontend(cloud)[Frontend]
+
+    service db(database)[Database] in backend
+    service api(server)[API] in backend
+    service worker(server)[Worker] in backend
+    service servicebus(cloud)[Azure Service Bus] in backend
+
+    service react(internet)[React Frontend] in frontend
+
+    db:T <--> B:api
+    db:R <--> L:worker
+    api:R --> L:servicebus
+    worker:T <-- B:servicebus
+    
+    react:R <--> L:api
+
+```
+
+# Instruções para execução
+
 ```
 projeto-poc-tmb/
 ├── backend/
@@ -16,8 +40,6 @@ projeto-poc-tmb/
 ├── README.md
 └── .gitignore
 ```
-
-# Instruções para execução
 
 ## Pré-requisitos
 
