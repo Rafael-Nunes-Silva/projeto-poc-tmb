@@ -40,6 +40,16 @@ namespace api_poc_tmb
 
             builder.Services.AddControllers();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             var app = builder.Build();
 
             app.MapHealthChecks("/health/live", new HealthCheckOptions
@@ -54,7 +64,7 @@ namespace api_poc_tmb
                 ResponseWriter = CustomHealthResponse.WriteResponse
             });
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
@@ -63,6 +73,8 @@ namespace api_poc_tmb
                 var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
                 db.Database.Migrate();
             }
+
+            app.UseCors();
 
             app.MapControllers();
 
