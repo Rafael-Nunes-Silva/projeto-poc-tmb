@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { GetOrders } from "../services/OrdersService";
 import StatusBadge from "./StatusBadge";
+import { useNavigate } from 'react-router-dom';
 
 export default function OrdersTable() {
+    const navigate = useNavigate();
+
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-            GetOrders().then((orders) => {
-                setOrders(orders.data);
+            GetOrders().then((response) => {
+                setOrders(response.data);
             });
         }, 1000);
         return () => clearInterval(intervalId);
@@ -29,7 +32,11 @@ export default function OrdersTable() {
                 </thead>
                 <tbody>
                     {orders.map((order, index) =>
-                        <tr key={index} className={index % 2 != 0 ? "bg-slate-100" : "bg-white"}>
+                        <tr
+                            key={index}
+                            className={index % 2 != 0 ? "bg-slate-100" : "bg-white"}
+                            onClick={() => navigate(`/detalhes-pedido/${order.id}`)}
+                        >
                             <td className="p-3 font-medium">{order.id}</td>
                             <td className="p-3 font-medium">{order.cliente}</td>
                             <td className="p-3 font-medium">{order.produto}</td>

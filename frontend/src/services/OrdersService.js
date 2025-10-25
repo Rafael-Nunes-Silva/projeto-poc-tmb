@@ -12,3 +12,7 @@ export function NewOrder(cliente, produto, valor) {
 export function GetOrders() {
     return axios.get(`${import.meta.env.VITE_BASE_API_URL}orders`);
 }
+
+export function GetOrder(id) {
+    return axios.get(`${import.meta.env.VITE_BASE_API_URL}orders/${id}`);
+}

@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { GetOrders } from "../services/OrdersService";
 import StatusBadge from "./StatusBadge";
+import { useNavigate } from 'react-router-dom';
 
 export default function OrdersList() {
+    const navigate = useNavigate();
+
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-            GetOrders().then((orders) => {
-                setOrders(orders.data);
+            GetOrders().then((response) => {
+                setOrders(response.data);
             });
         }, 1000);
         return () => clearInterval(intervalId);
@@ -20,6 +23,7 @@ export default function OrdersList() {
                 <div
                     key={order.id}
                     className="bg-slate-50 border border-slate-200 shadow-sm rounded-lg px-5 py-4"
+                    onClick={() => navigate(`/detalhes-pedido/${order.id}`)}
                 >
                     <div className="flex justify-between items-center">
                         <div className="flex flex-wrap items-center text-slate-700 text-sm sm:text-base font-medium gap-2">
