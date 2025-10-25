@@ -25,7 +25,7 @@ export default function OrdersList() {
                     orders.map((order) => (
                         <div
                             key={order.id}
-                            className="bg-slate-50 border border-slate-200 shadow-sm rounded-lg px-5 py-4"
+                            className="bg-slate-50 border border-slate-200 shadow-sm rounded-lg px-5 py-4 cursor-pointer"
                             onClick={() => navigate(`/detalhes-pedido/${order.id}`)}
                         >
                             <div className="flex justify-between items-center">

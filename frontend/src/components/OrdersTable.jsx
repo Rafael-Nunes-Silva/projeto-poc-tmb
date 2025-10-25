@@ -37,7 +37,7 @@ export default function OrdersTable() {
                         {orders.map((order, index) =>
                             <tr
                                 key={index}
-                                className={index % 2 != 0 ? "bg-slate-100" : "bg-white"}
+                                className={`${index % 2 != 0 ? "bg-slate-100" : "bg-white"} cursor-pointer`}
                                 onClick={() => navigate(`/detalhes-pedido/${order.id}`)}
                             >
                                 <td className="p-3 font-medium">{order.id}</td>
