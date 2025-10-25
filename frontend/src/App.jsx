@@ -1,10 +1,10 @@
 import './App.css'
-import OrdersList from './components/OrdersList';
+import NewOrder from './pages/NewOrder';
 
 function App() {
   return (
     <div>
-      <OrdersList></OrdersList>
+      <NewOrder></NewOrder>
     </div>
   );
 }
