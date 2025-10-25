@@ -29,10 +29,10 @@ export default function OrderForm() {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="max-w-md mx-auto">
+            <div className="max-w-md mx-auto border border-gray-200 px-5 py-2 bg-gray-100">
                 <div className="my-3 max-w flex flex-col">
                     <label for="clienteInput" className="font-semibold">Cliente</label>
-                    <input className="border-b border-gray-300 focus:border-gray-900 block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                    <input className="bg-white border-b border-gray-300 focus:border-gray-900 block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                         id="clienteInput"
                         type="text"
                         onChange={(e) => setCliente(e.target.value)}
@@ -40,7 +40,7 @@ export default function OrderForm() {
                 </div>
                 <div className="my-3 max-w flex flex-col">
                     <label for="produtoInput" className="font-semibold">Produto</label>
-                    <input className="border-b border-gray-300 focus:border-gray-900 block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                    <input className="bg-white border-b border-gray-300 focus:border-gray-900 block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                         id="produtoInput"
                         type="text"
                         onChange={(e) => setProduto(e.target.value)}
@@ -48,9 +48,9 @@ export default function OrderForm() {
                 </div>
                 <div className="my-3 max-w flex flex-col">
                     <label for="valorInput" className="font-semibold">Valor</label>
-                    <div className="flex flex-row items-center">
+                    <div className="bg-white flex flex-row items-center">
                         <span>R$</span>
-                        <input className="border-b border-gray-300 focus:border-gray-900 block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                        <input className="bg-white border-b border-gray-300 focus:border-gray-900 block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                             id="valorInput"
                             type="number"
                             onChange={(e) => setValor(e.target.value)}
@@ -58,7 +58,7 @@ export default function OrderForm() {
                     </div>
                 </div>
                 <div className="my-2 max-w text-center">
-                    <button type="submit" className="p-2 rounded-xl bg-blue-200">Fazer pedido</button>
+                    <button type="submit" className="p-2 rounded-xl bg-blue-200 cursor-pointer">Fazer pedido</button>
                 </div>
             </div>
         </form>
