@@ -49,11 +49,11 @@ projeto-poc-tmb/
 
 ### Estrutura (esperada)
 ```
-/backend
-  /api-poc-tmb        -> projeto API (.NET)
-  /worker-orders      -> projeto Worker (.NET)
+backend/
+  docker-compose.yml  -> docker-compose do projeto
+  api-poc-tmb/        -> projeto API (.NET)
+  worker-orders/      -> projeto Worker (.NET)
 frontend/             -> React + Vite app
-docker-compose.yml
 ```
 
 ## Variáveis de ambiente / configuração
@@ -70,8 +70,7 @@ Configurações (connection strings, service bus, etc.) estão em backend/api-po
 
 ## Execução com Docker Compose
 
-* Na pasta frontend/ crie/configure o .env
-* um .env do Docker com a connection string do DB / Service Bus.
+* As variáveis de ambiente estão no `backend/docker-compose.yml`
 
 ### Execute:
 ```
@@ -80,6 +79,6 @@ docker-compose up --build
 
 ### Acesse:
 
-API: http://localhost:< porta-do-backend >
+API: http://localhost:3000
 
-Frontend: http://localhost:< porta-do-frontend >
+Frontend: http://localhost:8000
