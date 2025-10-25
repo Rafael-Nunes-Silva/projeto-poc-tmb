@@ -15,32 +15,33 @@ export default function OrdersList() {
     }, []);
 
     return (
-        <table className="w-full text-left table-auto">
-            <thead>
-                <tr className="bg-slate-200">
-                    <th className="border-b">Id</th>
-                    <th className="border-b">Cliente</th>
-                    <th className="border-b">Produto</th>
-                    <th className="border-b">Valor</th>
-                    <th className="border-b">Status</th>
-                    <th className="border-b">Data da criacao</th>
-                </tr>
-            </thead>
-            <tbody>
-                {orders.map((order, index) =>
-                    <tr key={index} className={index % 2 != 0 ? "bg-slate-100" : "bg-white"}>
-                        <td className="p-2">{order.id}</td>
-                        <td className="p-2">{order.cliente}</td>
-                        <td className="p-2">{order.produto}</td>
-                        <td className="p-2">R$ {order.valor}</td>
-                        <td className="p-2"><StatusBadge status={order.status}></StatusBadge></td>
-                        <td className="p-2">{new Date(order.data_criacao)
-                            .toLocaleString("pt-BR", {
-                                dateStyle: "short"
-                            })}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>
+        <div className="p-6 space-y-5">
+            {orders.map((order) => (
+                <div
+                    key={order.id}
+                    className="bg-slate-50 border border-slate-200 shadow-sm rounded-lg px-5 py-4"
+                >
+                    <div className="flex justify-between items-center">
+                        <div className="flex flex-wrap items-center text-slate-700 text-sm sm:text-base font-medium gap-2">
+                            <span className="text-slate-400 font-semibold">{order.id}</span>
+                            <span className="text-slate-300">|</span>
+                            <span className="font-semibold text-lg text-slate-800">{order.produto}</span>
+                            <span className="text-slate-300">|</span>
+                            <span className="text-slate-500">{order.cliente}</span>
+                        </div>
+                        <span className="text-slate-500 font-medium text-sm">
+                            {new Date(order.data_criacao).toLocaleDateString("pt-BR")}
+                        </span>
+                    </div>
+
+                    <div className="flex justify-between items-center mt-3">
+                        <span className="text-xl font-semibold text-slate-800">
+                            R$ {order.valor}
+                        </span>
+                        <StatusBadge status={order.status} />
+                    </div>
+                </div>
+            ))}
+        </div>
     );
 }
