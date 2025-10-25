@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
+import { GetOrders } from "../services/OrdersService";
 
 export default function OrdersList() {
-    const [orders, setOrders] = useState(null);
+    const [orders, setOrders] = useState([]);
 
     useEffect(() => {
-        //TODO:
-        //buscar do backend os pedidos
+        GetOrders().then((orders) => {
+            setOrders(orders.data);
+        });
     }, []);
 
     return (
@@ -21,14 +23,17 @@ export default function OrdersList() {
                 </tr>
             </thead>
             <tbody>
-                {orders.map((order) =>
-                    <tr>
+                {orders.map((order, index) =>
+                    <tr key={index}>
                         <td className="p-2">{order.id}</td>
                         <td className="p-2">{order.cliente}</td>
                         <td className="p-2">{order.produto}</td>
                         <td className="p-2">R$ {order.valor}</td>
                         <td className="p-2">{order.status}</td>
-                        <td className="p-2">{order.data_criacao}</td>
+                        <td className="p-2">{new Date(order.data_criacao)
+                            .toLocaleString("pt-BR", {
+                                dateStyle: "short"
+                            })}</td>
                     </tr>
                 )}
             </tbody>
