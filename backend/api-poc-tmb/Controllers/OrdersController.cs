@@ -82,7 +82,7 @@ namespace api_poc_tmb.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetAllOrders()
         {
-            var orders = await _dbContext.orders.ToListAsync();
+            var orders = await _dbContext.orders.OrderBy((order) => order.Data_criacao).ToListAsync();
             return Ok(orders);
         }
 
