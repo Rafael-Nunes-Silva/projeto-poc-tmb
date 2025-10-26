@@ -34,7 +34,7 @@ export default function Analytics() {
         <div className="mx-auto mt-75">
             <form onSubmit={handleSubmit}>
                 <div className="max-w-md mx-auto border border-slate-200 px-5 py-2 bg-slate-100">
-                    {!carregando ? <Loading></Loading> : <></>}
+                    {carregando ? <Loading></Loading> : <></>}
                     <div className="my-3 max-w flex flex-col bg-white">
                         <p>{resposta}</p>
                     </div>
