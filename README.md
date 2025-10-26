@@ -2,6 +2,9 @@
 
 Projeto completo desafio POC TMB
 
+## Vídeo do projeto
+https://github.com/user-attachments/assets/2107b816-b73f-41bf-bc9e-63666fd07d0b
+
 # Arquitetura
 ```mermaid
 architecture-beta
