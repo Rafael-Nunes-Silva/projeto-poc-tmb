@@ -7,6 +7,7 @@ Projeto completo desafio POC TMB
 architecture-beta
     group backend(cloud)[Backend]
     group frontend(cloud)[Frontend]
+    group openai(cloud)[OpenAI]
 
     service db(database)[Database] in backend
     service api(server)[API] in backend
@@ -15,13 +16,16 @@ architecture-beta
 
     service react(internet)[React Frontend] in frontend
 
+    service gpt(server)[GPT] in openai
+
     db:T <--> B:api
     db:R <--> L:worker
     api:R --> L:servicebus
     worker:T <-- B:servicebus
     
-    react:R <--> L:api
+    react:B <--> T:api
 
+    gpt:R <--> L:api
 ```
 
 # Instruções para execução
@@ -66,7 +70,9 @@ VITE_BASE_API_URL='URL do backend'
 
 ### Backend
 
-Configurações (connection strings, service bus, etc.) estão em backend/api-poc-tmb/appsettings.json para desenvolvimento.
+Configurações (connection strings, service bus, open ai, etc.) estão em backend/api-poc-tmb/appsettings.json para desenvolvimento.
+
+São necessárias a string de conexão com o Azure Service Bus e a chave de API da OpenAI.
 
 ## Execução com Docker Compose
 
