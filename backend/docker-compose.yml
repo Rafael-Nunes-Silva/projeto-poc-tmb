@@ -11,8 +11,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=postgresql-poc-tmb;Port=5432;Username=backend-user;Password=Tw2cDZOca41W;Database=ordersdb
-      - ServiceBus__ConnectionString=Endpoint=sb://api-poc-tmb.servicebus.windows.net/;SharedAccessKeyName=send-listen-policy;SharedAccessKey=iRtzCyMB9AL0TPZxgK60Ntl5Zlppo+Bze+ASbM5dg2w=;EntityPath=orders-queue
+      - ServiceBus__ConnectionString=...
       - ServiceBus__QueueName=orders-queue
+      - OpenAPI__ApiKey=...
+      - OpenAPI__ModelName=gpt-4.1
     depends_on:
       - postgresql-poc-tmb
     healthcheck:
@@ -50,7 +52,7 @@ services:
       dockerfile: worker-orders/Dockerfile
     environment:
       - ConnectionStrings__DefaultConnection=Host=postgresql-poc-tmb;Port=5432;Username=backend-user;Password=Tw2cDZOca41W;Database=ordersdb
-      - ServiceBus__ConnectionString=Endpoint=sb://api-poc-tmb.servicebus.windows.net/;SharedAccessKeyName=send-listen-policy;SharedAccessKey=iRtzCyMB9AL0TPZxgK60Ntl5Zlppo+Bze+ASbM5dg2w=;EntityPath=orders-queue
+      - ServiceBus__ConnectionString=...
       - ServiceBus__QueueName=orders-queue
     depends_on:
       - postgresql-poc-tmb

@@ -16,3 +16,7 @@ export function GetOrders() {
 export function GetOrder(id) {
     return axios.get(`${import.meta.env.VITE_BASE_API_URL}orders/${id}`);
 }
+
+export function Analise(pergunta) {
+    return axios.get(`${import.meta.env.VITE_BASE_API_URL}orders/pergunta/${pergunta}`);
+}

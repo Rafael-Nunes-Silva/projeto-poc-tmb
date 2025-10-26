@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import NewOrder from './pages/NewOrder';
 import Orders from './pages/Orders';
 import OrderDetails from './pages/OrderDetails';
+import Analytics from './pages/Analytics';
 
 function App() {
   return (
@@ -14,12 +15,16 @@ function App() {
         <Link className="bg-slate-300 font-semibold p-1 rounded-md"
           to="/listagem-pedidos"
         >Pedidos</Link>
+        <Link className="bg-slate-300 font-semibold p-1 rounded-md"
+          to="/analytics"
+        >Análise LLM</Link>
       </nav>
 
       <Routes>
         <Route path="/novo-pedido" element={<NewOrder />} />
         <Route path="/listagem-pedidos" element={<Orders />} />
         <Route path="/detalhes-pedido/:id" element={<OrderDetails />} />
+        <Route path="/analytics" element={<Analytics />} />
       </Routes>
     </Router>
   );

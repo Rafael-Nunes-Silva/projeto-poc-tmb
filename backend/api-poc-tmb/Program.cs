@@ -1,5 +1,7 @@
 using api_poc_tmb.Data;
 using api_poc_tmb.HealthChecks;
+using api_poc_tmb.Services;
+using api_poc_tmb.Services.Interfaces;
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -37,6 +39,9 @@ namespace api_poc_tmb
                     new ServiceBusAdministrationClient(serviceBusConn),
                     serviceBusQueue!
                 ), tags: new[] { "ready", "queue" });
+
+            builder.Services.AddScoped<IOpenAIService, OpenAIService>();
+            builder.Services.AddScoped<ILLMSqlService, LLMSqlService>();
 
             builder.Services.AddControllers();
 

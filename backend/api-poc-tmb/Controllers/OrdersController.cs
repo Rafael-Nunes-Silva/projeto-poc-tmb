@@ -1,10 +1,11 @@
 using api_poc_tmb.Data;
 using api_poc_tmb.Models;
+using api_poc_tmb.Services;
+using api_poc_tmb.Services.Interfaces;
 using Azure.Messaging.ServiceBus;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace api_poc_tmb.Controllers
 {
@@ -15,17 +16,28 @@ namespace api_poc_tmb.Controllers
         private readonly ILogger<OrdersController> _logger;
         private readonly DatabaseContext _dbContext;
         private readonly ServiceBusClient _busClient;
+        private readonly IOpenAIService _openaiService;
+        private readonly ILLMSqlService _llmSqlService;
         private readonly string _queueName = "orders-queue";
 
         public OrdersController(
             ILogger<OrdersController> logger,
             DatabaseContext dbContext,
-            ServiceBusClient busClient
+            ServiceBusClient busClient,
+            IOpenAIService openaiService,
+            IConfiguration configuration,
+            ILLMSqlService llmSqlService
             )
         {
             _logger = logger;
             _dbContext = dbContext;
             _busClient = busClient;
+            _openaiService = openaiService;
+            _llmSqlService = llmSqlService;
+
+            var queueName = configuration.GetSection("AzureServiceBus").GetValue<string>("QueueName");
+            if (queueName != null)
+                _queueName = queueName;
         }
 
         /// <summary>
@@ -104,6 +116,22 @@ namespace api_poc_tmb.Controllers
                 return NotFound($"Pedido {id} não encontrado");
 
             return Ok(order);
+        }
+
+        /// <summary>
+        /// Retorna o pedido especificado pelo Id
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("pergunta/{texto}")]
+        public async Task<ActionResult<string>> Pergunta(string texto)
+        {
+            var querySql = _openaiService.GenerateSQLQuery(texto);
+
+            var queryResult = await _llmSqlService.ExecuteDynamicSqlAsync(querySql);
+
+            var respostaAmigavel = _openaiService.GenerateFriendlyAnswer(texto, queryResult);
+
+            return Ok(respostaAmigavel);
         }
     }
 }
