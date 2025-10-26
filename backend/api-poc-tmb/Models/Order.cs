@@ -15,5 +15,7 @@
         public float Valor { get; set; }
         public EOrderStatus Status { get; set; } = EOrderStatus.Pendente;
         public DateTimeOffset Data_criacao { get; set; } = DateTime.UtcNow;
+        
+        public List<OrderStatusHistory> HistoricoStatus { get; set; } = new();
     }
 }

@@ -82,7 +82,9 @@ namespace api_poc_tmb.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetAllOrders()
         {
-            var orders = await _dbContext.orders.OrderBy((order) => order.Data_criacao).ToListAsync();
+            var orders = await _dbContext.orders
+                .Include(o => o.HistoricoStatus)
+                .OrderByDescending((order) => order.Data_criacao).ToListAsync();
             return Ok(orders);
         }
 
@@ -94,7 +96,10 @@ namespace api_poc_tmb.Controllers
         [HttpGet("{id}")]
         public ActionResult<Order> GetOrderById(int id)
         {
-            var order = _dbContext.orders.FirstOrDefault(o => o.Id == id);
+            var order = _dbContext.orders
+                .Include(o => o.HistoricoStatus)
+                .FirstOrDefault(o => o.Id == id);
+
             if (order == null)
                 return NotFound($"Pedido {id} não encontrado");
 

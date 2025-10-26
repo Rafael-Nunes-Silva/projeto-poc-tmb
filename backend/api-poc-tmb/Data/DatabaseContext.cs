@@ -8,5 +8,6 @@ namespace api_poc_tmb.Data
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
         public DbSet<Order> orders { get; set; }
+        public DbSet<OrderStatusHistory> orderStatusHistories { get; set; }
     }
 }

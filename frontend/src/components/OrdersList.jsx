@@ -12,6 +12,7 @@ export default function OrdersList() {
     useEffect(() => {
         const intervalId = setInterval(() => {
             GetOrders().then((response) => {
+                console.log(response.data);
                 setOrders(response.data);
             });
         }, 1000);

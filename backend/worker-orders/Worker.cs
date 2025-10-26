@@ -1,6 +1,7 @@
-using Azure.Messaging.ServiceBus;
 using api_poc_tmb.Data;
 using api_poc_tmb.Models;
+using Azure.Messaging.ServiceBus;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace worker_orders;
@@ -71,7 +72,20 @@ public class Worker : BackgroundService
                 return;
             }
 
-            order.Status = EOrderStatus.Processando;
+            // Aguarda 5 segundos para dar tempo de ver o pedido no status Pendente
+            await Task.Delay(TimeSpan.FromSeconds(5));
+
+            var novoStatus = EOrderStatus.Processando;
+            var historico = new OrderStatusHistory
+            {
+                OrderId = order.Id,
+                StatusAntigo = order.Status,
+                StatusNovo = novoStatus,
+                DataAlteracao = DateTime.UtcNow
+            };
+
+            order.Status = novoStatus;
+            db.orderStatusHistories.Add(historico);
             await db.SaveChangesAsync();
 
             _logger.LogInformation("Pedido {OrderId} em processamento...", orderId);
@@ -79,7 +93,17 @@ public class Worker : BackgroundService
             // Simula processamento de 5 segundos
             await Task.Delay(TimeSpan.FromSeconds(5));
 
-            order.Status = EOrderStatus.Finalizado;
+            novoStatus = EOrderStatus.Finalizado;
+            historico = new OrderStatusHistory
+            {
+                OrderId = order.Id,
+                StatusAntigo = order.Status,
+                StatusNovo = novoStatus,
+                DataAlteracao = DateTime.UtcNow
+            };
+
+            order.Status = novoStatus;
+            db.orderStatusHistories.Add(historico);
             await db.SaveChangesAsync();
 
             _logger.LogInformation("Pedido {OrderId} finalizado.", orderId);
